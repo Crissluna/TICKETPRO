@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+  <title>ZONAS</title>
+  
+  <link rel="stylesheet" href="../assets/css/Hero-Clean-Reverse-images.css" />
+  <link rel="stylesheet" href="../assets/css/Navbar-Right-Links-icons.css" />
+
+
+  <style>
+    .container {
+      display: flex; 
+      justify-content: space-between;
+    }
+    #order-summary-container {
+      width: 30%; 
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
+    #seats-container {
+      width: 70%; 
+    }
+    .seat {
+      cursor: pointer;
+      padding: 5px;
+      margin: 2px;
+      background-size: cover;
+      width: 30px;
+      height: 30px;
+      display: inline-block;
+    }
+    .occupied {
+      background-image: url('https://cdn-icons-png.flaticon.com/512/24/24868.png');
+    }
+    .available {
+      background-image: url('https://us.123rf.com/450wm/iconscart/iconscart2009/iconscart200902053/167496465-icono-de-asiento-para-dise%C3%B1o-de-sitios-web-y-desarrollo-de-escritorio-desarrollo-paquete-de.jpg');
+    }
+    .seat-info {
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    .delete-icon {
+      cursor: pointer;
+      width: 20px;
+      height: 20px;
+      margin-left: 10px;
+    }
+    
+    button {
+      padding: 10px 20px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .payment-form {
+      display: none;
+      width: 100%; 
+      max-width: 280px; 
+      padding: 20px; 
+      background-color: #f8f8f8; 
+      border-radius: 8px; 
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    }
+    .payment-form input,
+    .payment-form button {
+      width: calc(100% - 20px); 
+      padding: 8px 10px;
+      margin-top: 10px; 
+    }
+    .payment-form label {
+      display: block; 
+      margin-bottom: 5px; 
+    }
+    .payment-form h2 {
+      text-align: center;
+    }
+
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="seats-container">
+      <!-- Contenedor para todas las zonas -->
+      <div id="vip-zone">
+        <h2 class="zone-title">Seleccione sus Asientos</h2>
+        <h2 class="zone-title">Zona VIP</h2>
+        <div class="row" id="vip-row-1"></div>
+        <div class="row" id="vip-row-2"></div>
+      </div>
+
+      <div id="medium-zone">
+        <h2 class="zone-title">Zona Media</h2>
+        <div class="row" id="medium-row-1"></div>
+        <div class="row" id="medium-row-2"></div>
+      </div>
+
+      <div id="bad-zone">
+        <h2 class="zone-title">Zona General</h2>
+        <div class="row" id="bad-row-1"></div>
+        <div class="row" id="bad-row-2"></div>
+      </div>
+    </div> 
+
+
+<!-- Los asientos seleccionados se mostrarán aquí -->
+    <div id="order-summary-container">
+      <div id="order-summary">
+        <h2>Resumen del Pedido:</h2>
+        
+      </div>
+      <button onclick="clearCart()">Limpiar Carrito</button>
+      <button onclick="finalizePurchase()">Finalizar Compra</button>
+
+      <div class="payment-form">
+        <h2>Método de Pago</h2>
+        <label for="cardholder-name">Nombre del Titular de la Tarjeta:</label><br>
+        <input type="text" id="cardholder-name" name="cardholder-name"><br>
+        <label for="card-number">Número de Tarjeta:</label><br>
+        <input type="text" id="card-number" name="card-number"><br>
+        <label for="expiry-date">Fecha de Expiración:</label><br>
+        <input type="text" id="expiry-date" name="expiry-date"><br>
+        <label for="security-code">Código de Seguridad:</label><br>
+        <input type="text" id="security-code" name="security-code"><br>
+        <button onclick="processPayment()">Aceptar</button>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+const prices = {
+  'vip-zone': 100,
+  'medium-zone': 70, 
+  'bad-zone': 50 
+};
+
+
+    function generateSeats(zoneId, rowsSeats, zoneStartNumber) {
+  const zone = document.getElementById(zoneId);
+  let seatNumber = zoneStartNumber;
+  rowsSeats.forEach((seats, rowIdx) => {
+    const row = document.createElement('div');
+    row.className = 'row';
+    for (let seatNum = 1; seatNum <= seats; seatNum++) {
+      const seat = document.createElement('div');
+      seat.className = 'seat available';
+      // Agregar un ID único a cada asiento
+      seat.id = `${zoneId}-seat-${seatNumber}`;
+      seat.textContent = seatNumber;
+      seat.onclick = function(event) { buyTicket(event, zoneId, `${rowIdx + 1}-${seatNumber}`); };
+      row.appendChild(seat);
+      seatNumber++;
+    }
+    zone.appendChild(row);
+  });
+}
+
+  
+function buyTicket(event, seatType, seatNumber) {
+  const seat = event.target;
+  if (seat.classList.contains('available')) {
+    seat.classList.remove('available');
+    seat.classList.add('occupied');
+    const selectedSeats = JSON.parse(localStorage.getItem('selectedSeats')) || [];
+    selectedSeats.push({ seatType, seatNumber, price: prices[seatType] });
+    localStorage.setItem('selectedSeats', JSON.stringify(selectedSeats));
+    updateOrderSummary(); 
+  } else {
+    alert('Este asiento ya está ocupado.');
+  }
+}
+  
+function updateOrderSummary() {
+  const selectedSeats = JSON.parse(localStorage.getItem('selectedSeats')) || [];
+  const orderSummaryElement = document.getElementById('order-summary');
+  orderSummaryElement.innerHTML = '<h2>Resumen del Pedido:</h2>'; 
+
+  let totalPrice = 0;
+  let totalSeats = 0; 
+
+  if (selectedSeats.length === 0) {
+    orderSummaryElement.innerHTML += '<p>No hay asientos seleccionados.</p>';
+  } else {
+    // Muestra cada asiento seleccionado
+    selectedSeats.forEach(seat => {
+      totalSeats++; // Incrementa el contador de asientos
+      totalPrice += seat.price; // Suma al precio total
+
+      const seatInfoDiv = document.createElement('div');
+      seatInfoDiv.className = 'seat-info';
+      seatInfoDiv.innerHTML = `
+        Número de asiento: ${seat.seatNumber} - Zona: ${seat.seatType.replace('-zone', '')} - Precio: $${seat.price}
+        <img class="delete-icon" src="your-trashcan-icon-url" onclick="removeSeat('${seat.seatType}', '${seat.seatNumber}')">
+      `;
+      orderSummaryElement.appendChild(seatInfoDiv);
+    });
+    const totalInfoDiv = document.createElement('div');
+    totalInfoDiv.className = 'total-info';
+    totalInfoDiv.innerHTML = `
+      <strong>Total de Asientos Seleccionados: ${totalSeats}</strong>
+      <strong>Precio Total: $${totalPrice}</strong>
+    `;
+    orderSummaryElement.appendChild(totalInfoDiv);
+  }
+}
+
+
+    
+  
+    function removeSeat(seatType, seatNumber) {
+
+      const selectedSeats = JSON.parse(localStorage.getItem('selectedSeats')) || [];
+      const seatIndex = selectedSeats.findIndex(seat => seat.seatType === seatType && seat.seatNumber === seatNumber);
+      if(seatIndex !== -1) {
+        selectedSeats.splice(seatIndex, 1);
+        localStorage.setItem('selectedSeats', JSON.stringify(selectedSeats));
+      }
+      const seatId = `${seatType}-seat-${seatNumber}`;
+      const seat = document.getElementById(seatId);
+      if (seat) {
+        seat.classList.remove('occupied');
+        seat.classList.add('available');
+      }
+      loadSelectedSeats();
+    }
+  
+function clearCart() {
+  localStorage.removeItem('selectedSeats');
+  const allOccupiedSeats = document.querySelectorAll('.seat.occupied');
+  allOccupiedSeats.forEach(seat => {
+    seat.classList.remove('occupied');
+    seat.classList.add('available');
+  });
+
+  loadSelectedSeats();
+}
+
+
+  
+    function finalizePurchase() {
+      document.querySelector('.payment-form').style.display = 'block'; 
+    }
+  
+    function loadSelectedSeats() {
+  const selectedSeats = JSON.parse(localStorage.getItem('selectedSeats')) || [];
+  const orderSummaryElement = document.getElementById('order-summary');
+  orderSummaryElement.innerHTML = '<h2>Resumen del Pedido:</h2>';
+
+  let totalPrice = 0;
+  let totalSeats = 0;
+
+  if (selectedSeats.length === 0) {
+    orderSummaryElement.innerHTML += '<p>No hay asientos seleccionados.</p>';
+  } else {
+    selectedSeats.forEach(seat => {
+      totalSeats++; 
+      const price = prices[seat.seatType];
+      totalPrice += price;
+
+      const seatInfoDiv = document.createElement('div');
+      seatInfoDiv.className = 'seat-info';
+      seatInfoDiv.innerHTML = `
+        Número de asiento: ${seat.seatNumber} - Zona: ${seat.seatType.replace('-zone', '')} - Precio: $${price}
+        <img class="delete-icon" src="your-trashcan-icon-url" onclick="removeSeat('${seat.seatType}', '${seat.seatNumber}')">
+      `;
+      orderSummaryElement.appendChild(seatInfoDiv);
+    });
+
+    // Agrega la cantidad total de asientos al resumen del pedido
+    const totalSeatsDiv = document.createElement('div');
+    totalSeatsDiv.className = 'total-seats';
+    totalSeatsDiv.innerHTML = `<strong>Total de Asientos Seleccionados: ${totalSeats}</strong>`;
+    orderSummaryElement.appendChild(totalSeatsDiv);
+
+    // Agrega el precio total al resumen del pedido
+    const totalDiv = document.createElement('div');
+    totalDiv.className = 'total-price';
+    totalDiv.innerHTML = `<strong>Precio Total: $${totalPrice}</strong>`;
+    orderSummaryElement.appendChild(totalDiv);
+  }
+}
+
+
+function processPayment() {
+  // Desúes aqui validar los campos y luego simular una operación de pago
+  showPaymentSuccessMessage();
+}
+
+function showPaymentSuccessMessage() {
+  document.querySelector('.payment-form').style.display = 'none'; // Oculta el formulario
+}
+
+
+function clearCart() {
+
+  localStorage.removeItem('selectedSeats');
+  const allOccupiedSeats = document.querySelectorAll('.seat.occupied');
+  allOccupiedSeats.forEach(seat => {
+    seat.classList.remove('occupied');
+    seat.classList.add('available');
+  });
+  loadSelectedSeats();
+}
+
+  
+window.onload = function() {
+  generateSeats('vip-zone', [3, 5], 1);
+  generateSeats('medium-zone', [6, 6], 16);
+  generateSeats('bad-zone', [7, 8], 28);
+  markOccupiedSeats();
+  loadSelectedSeats();
+  
+};
+
+function markOccupiedSeats() {
+  const selectedSeats = JSON.parse(localStorage.getItem('selectedSeats')) || [];
+  selectedSeats.forEach(seat => {
+    const seatId = `${seat.seatType}-seat-${seat.seatNumber.split('-')[1]}`;
+    const seatDiv = document.getElementById(seatId);
+    if (seatDiv) {
+      seatDiv.classList.remove('available');
+      seatDiv.classList.add('occupied');
+    }
+  });
+}
+
+
+  </script>
+  
+</body>
+</html>
