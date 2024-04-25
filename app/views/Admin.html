@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+    />
+    <title>TicketPRO</title>
+    <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../assets/css/Hero-Clean-Reverse-images.css" />
+    <link rel="stylesheet" href="../assets/css/Navbar-Right-Links-icons.css" />
+  </head>
+  <body>
+    <div>
+      <nav
+        class="navbar navbar-expand-md bg-body py-3"
+        style="border-bottom: 2px solid #b6c2cc"
+      >
+        <div class="container">
+          <a
+            class="navbar-brand d-flex align-items-center"
+            href="../views/index.html"
+          >
+            <span
+              class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="1em"
+                height="1em"
+                fill="currentColor"
+                viewBox="0 0 16 16"
+                class="bi bi-ticket"
+              >
+                <path
+                  d="M0 4.5A1.5 1.5 0 0 1 1.5 3h13A1.5 1.5 0 0 1 16 4.5V6a.5.5 0 0 1-.5.5 1.5 1.5 0 0 0 0 3 .5.5 0 0 1 .5.5v1.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 11.5V10a.5.5 0 0 1 .5-.5 1.5 1.5 0 1 0 0-3A.5.5 0 0 1 0 6zM1.5 4a.5.5 0 0 0-.5.5v1.05a2.5 2.5 0 0 1 0 4.9v1.05a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-1.05a2.5 2.5 0 0 1 0-4.9V4.5a.5.5 0 0 0-.5-.5z"
+                ></path>
+              </svg>
+            </span>
+            <span>TicketPRO</span>
+          </a>
+          <button
+            data-bs-toggle="collapse"
+            class="navbar-toggler"
+            data-bs-target="#navcol-2"
+          >
+            <span class="visually-hidden">Toggle navigation</span>
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navcol-2">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item"></li>
+            </ul>
+            <a
+              class="btn btn-primary ms-md-2"
+              role="button"
+              href="../views/Admin.html"
+              >Administradores</a
+            >
+            <a
+              class="btn btn-primary ms-md-2"
+              role="button"
+              href="../views/untitled.html"
+              >Tu cuenta</a
+            >
+          </div>
+        </div>
+      </nav>
+    </div>
+    <form id="eventDetails" method="post">
+      <div class="container py-4 py-xl-5">
+        <div class="row gy-4 gy-md-0">
+          <div
+            class="col-md-6 text-center text-md-start d-flex d-sm-flex d-md-flex justify-content-center align-items-center justify-content-md-start align-items-md-center justify-content-xl-center"
+          >
+            <div style="max-width: 350px">
+              <div style="max-width: 350px">
+                <h2 class="text-uppercase fw-bold">
+                  Agrega los detalles del evento
+                </h2>
+                <input
+                  type="text"
+                  name="Name"
+                  placeholder="Nombre del evento"
+                />
+                <hr />
+                <input
+                  type="text"
+                  name="Description"
+                  placeholder="Descripción del evento"
+                />
+                <hr />
+                <input type="date" name="Date" />
+              </div>
+              <div style="max-width: 350px; padding-top: 10%">
+                <h2 class="text-uppercase fw-bold">
+                  Configura los detalles de la sección 1
+                </h2>
+                <div class="ticketTypes">
+                  <hr />
+                  <input
+                    type="text"
+                    name="ticketTypes[0][section]"
+                    placeholder="Sección del boleto"
+                  />
+                  <hr />
+                  <input
+                    type="text"
+                    name="ticketTypes[0][Price]"
+                    placeholder="Precio del tipo de boleto"
+                  />
+                  <hr />
+                  <input
+                    type="text"
+                    name="ticketTypes[0][Quantity]"
+                    placeholder="Cantidad de boletos"
+                  />
+                </div>
+              </div>
+              <div style="max-width: 350px; padding-top: 10%">
+                <h2 class="text-uppercase fw-bold">
+                  Configura los detalles de la sección 2
+                </h2>
+                <div class="ticketTypes">
+                  <hr />
+                  <input
+                    type="text"
+                    name="ticketTypes[1][section]"
+                    placeholder="Sección del boleto"
+                  />
+                  <hr />
+                  <input
+                    type="text"
+                    name="ticketTypes[1][Price]"
+                    placeholder="Precio del tipo de boleto"
+                  />
+                  <hr />
+                  <input
+                    type="text"
+                    name="ticketTypes[1][Quantity]"
+                    placeholder="Cantidad de boletos"
+                  />
+                </div>
+              </div>
+              <div style="max-width: 350px; padding-top: 10%">
+                <h2 class="text-uppercase fw-bold">
+                  Configura los detalles de la sección 3
+                </h2>
+                <div class="ticketTypes">
+                  <hr />
+                  <input
+                    type="text"
+                    name="ticketTypes[2][section]"
+                    placeholder="Sección del boleto"
+                  />
+                  <hr />
+                  <input
+                    type="text"
+                    name="ticketTypes[2][Price]"
+                    placeholder="Precio del tipo de boleto"
+                  />
+                  <hr />
+                  <input
+                    type="text"
+                    name="ticketTypes[2][Quantity]"
+                    placeholder="Cantidad de boletos"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="col-md-6 d-flex justify-content-center align-items-center"
+          >
+            <div class="p-xl-5 m-xl-5">
+              <img
+                class="rounded img-fluid w-100 fit-cover"
+                style="min-height: 300px; padding-bottom: 10%"
+                src="https://cdn.bootstrapstudio.io/placeholders/1400x800.png"
+              />
+              <input type="url" name="Image" placeholder="URL de la imagen" />
+              <hr />
+              <a
+                class="btn btn-primary ms-md-2"
+                role="button"
+                href="../views/Confirmacion.html"
+                >Confirmar Compra</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
+  </body>
+</html>
