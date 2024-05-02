@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Compra de Boletos</title>
+    <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../assets/css/Hero-Clean-Reverse-images.css" />
+    <link rel="stylesheet" href="../assets/css/Navbar-Right-Links-icons.css" />
+  </head>
+  <body>
+    <div>
+      <nav
+        class="navbar navbar-expand-md bg-body py-3"
+        style="border-bottom: 2px solid #b6c2cc"
+      >
+        <div class="container">
+          <a class="navbar-brand d-flex align-items-center" href="./index.html">
+            <span
+              class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="1em"
+                height="1em"
+                fill="currentColor"
+                viewBox="0 0 16 16"
+                class="bi bi-ticket"
+              >
+                <!-- SVG content -->
+              </svg>
+            </span>
+            <span>TicketPRO</span>
+          </a>
+          <button
+            data-bs-toggle="collapse"
+            class="navbar-toggler"
+            data-bs-target="#navcol-2"
+          >
+            <span class="visually-hidden">Toggle navigation</span>
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navcol-2">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item"></li>
+            </ul>
+            <a class="btn btn-primary ms-md-2" role="button" href="#"
+              >Administradores</a
+            >
+            <a class="btn btn-primary ms-md-2" role="button" href="#"
+              >Tu cuenta</a
+            >
+          </div>
+        </div>
+      </nav>
+    </div>
+
+    <h1>Selecciona los asientos para el evento:</h1>
+    <div id="events-container"></div>
+    <br />
+    <button id="buy-tickets" style="display: none" onclick="finalizePurchase()">
+      Comprar Boletos Seleccionados
+    </button>
+    <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const selectedEventId = localStorage.getItem("selectedEventId");
+
+        fetchEvent(selectedEventId);
+
+        async function fetchEvent(eventId) {
+          try {
+            const response = await fetch(
+              `http://localhost:3000/api/admin/events/${eventId}`
+            );
+            if (!response.ok) {
+              throw new Error("Failed to fetch event");
+            }
+            const event = await response.json();
+            displayEvent(event);
+          } catch (error) {
+            console.error("Error fetching event:", error);
+          }
+        }
+
+        function displayEvent(event) {
+          const container = document.getElementById("events-container");
+          container.innerHTML = "";
+          const eventDiv = document.createElement("div");
+          eventDiv.innerHTML = `
+      <h3>${event.name}</h3>
+      <p>${event.description}</p>
+      ${event.seats
+        .map(
+          (seat) => `
+        <button 
+          class="${seat.status === "available" ? "available" : "unavailable"}"
+          onclick="selectSeat('${event._id}', '${seat.section}', '${
+            seat.row
+          }', ${seat.number}, this, '${event.name}', '${event.description}')"
+          ${seat.status !== "available" ? "disabled" : ""}
+        >
+          Sección: ${seat.section}, Fila: ${seat.row}, Asiento: ${
+            seat.number
+          } - ${seat.status}
+        </button>
+      `
+        )
+        .join("")}
+    `;
+          container.appendChild(eventDiv);
+        }
+
+        window.selectSeat = function (
+          eventId,
+          section,
+          row,
+          seatNumber,
+          button,
+          eventName,
+          eventDescription
+        ) {
+          console.log(
+            `Asiento Sección: ${section}, Fila: ${row}, Número: ${seatNumber} seleccionado para el evento ${eventId}`
+          );
+
+          const seatDetails = { section, row, number: seatNumber };
+          let purchase = JSON.parse(localStorage.getItem("purchase")) || {
+            seats: [],
+          };
+
+          if (purchase.seats.length === 0) {
+            purchase.eventName = eventName;
+            purchase.eventDescription = eventDescription;
+          }
+
+          purchase.seats.push(seatDetails);
+          localStorage.setItem("purchase", JSON.stringify(purchase));
+
+          button.disabled = true;
+          document.getElementById("buy-tickets").style.display = "block";
+        };
+
+        window.finalizePurchase = async function () {
+          const token = sessionStorage.getItem("jwtToken");
+          const purchase = JSON.parse(localStorage.getItem("purchase"));
+          const response = await fetch(
+            "http://localhost:3000/api/tickets/buy",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                eventId: selectedEventId,
+                seats: purchase.seats,
+              }),
+            }
+          );
+
+          if (response.ok) {
+            console.log("Compra realizada con éxito");
+            fetchEvent(selectedEventId);
+            document.getElementById("buy-tickets").style.display = "none";
+            window.location.href = "/app/views/compraExitosa.html";
+          } else {
+            console.error("Error al comprar boletos");
+          }
+        };
+      });
+    </script>
+  </body>
+</html>
