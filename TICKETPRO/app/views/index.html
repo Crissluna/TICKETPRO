@@ -46,7 +46,7 @@
             <ul class="navbar-nav ms-auto">
               <li class="nav-item"></li>
             </ul>
-            <a class="btn btn-primary ms-md-2" role="button" href="#"
+            <a class="btn btn-primary ms-md-2" role="button" href="./test.html"
               >Administradores</a
             ><a
               class="btn btn-primary ms-md-2"
@@ -110,67 +110,13 @@
         </div>
       </section>
     </div>
+
     <div>
       <div
         class="d-flex justify-content-center align-items-center"
         style="padding-top: 3%; padding-bottom: 3%"
       >
-        <h1>Eventos populares</h1>
-      </div>
-      <div class="card-group"></div>
-    </div>
-    <div>
-      <div
-        class="d-flex justify-content-center align-items-center"
-        style="padding-top: 3%; padding-bottom: 3%"
-      >
-        <h1>Eventos musicales</h1>
-      </div>
-      <div class="card-group">
-        <div class="card">
-          <img class="card-img-top w-100 d-block" />
-          <div class="card-body text-center">
-            <h4 class="card-title">Title</h4>
-            <p class="card-text">
-              Nullam id dolor id nibh ultricies vehicula ut id elit. Cras justo
-              odio, dapibus ac facilisis in, egestas eget quam. Donec id elit
-              non mi porta gravida at eget metus.
-            </p>
-            <button class="btn btn-primary" type="button">Button</button>
-          </div>
-        </div>
-        <div class="card">
-          <img class="card-img-top w-100 d-block" />
-          <div class="card-body text-center">
-            <h4 class="card-title">Title</h4>
-            <p class="card-text">
-              Nullam id dolor id nibh ultricies vehicula ut id elit. Cras justo
-              odio, dapibus ac facilisis in, egestas eget quam. Donec id elit
-              non mi porta gravida at eget metus.
-            </p>
-            <button class="btn btn-primary" type="button">Button</button>
-          </div>
-        </div>
-        <div class="card">
-          <img class="card-img-top w-100 d-block" />
-          <div class="card-body text-center">
-            <h4 class="card-title">Title</h4>
-            <p class="card-text">
-              Nullam id dolor id nibh ultricies vehicula ut id elit. Cras justo
-              odio, dapibus ac facilisis in, egestas eget quam. Donec id elit
-              non mi porta gravida at eget metus.
-            </p>
-            <button class="btn btn-primary" type="button">Button</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div>
-      <div
-        class="d-flex justify-content-center align-items-center"
-        style="padding-top: 3%; padding-bottom: 3%"
-      >
-        <h1>Eventos deportivos</h1>
+        <h1>Nuestros Eventos</h1>
       </div>
       <div class="card-group">
         <div class="card">
@@ -297,7 +243,6 @@
         </div>
       </footer>
     </div>
-
     <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
     <script>
       function fetchAndRenderEvents() {
@@ -308,61 +253,69 @@
             }
             return response.json();
           })
-          .then((data) => {
-            renderEvents(data);
+          .then((events) => {
+            renderEvents(events);
           })
           .catch((error) => {
             console.error("Error:", error);
+            alert(
+              "No se pudieron cargar los eventos. Por favor, inténtalo de nuevo más tarde."
+            );
           });
       }
 
       function renderEvents(events) {
         const cardGroup = document.querySelector(".card-group");
         cardGroup.innerHTML = ""; // Limpiar el contenido existente antes de renderizar los nuevos eventos
+        let row = createRow();
 
         events.forEach((event, index) => {
-          const card = document.createElement("div");
-          card.classList.add("card");
-          card.innerHTML = `
-            <img class="card-img-top w-100 d-block" src="${event.Image}" />
-            <div class="card-body text-center">
-              <h4 class="card-title">${event.Name}</h4>
-              <p class="card-text">${event.Description}</p>
-              <button class="btn btn-primary" type="button" data-id="${event._id}">Button</button>
-            </div>
-          `;
-
-          cardGroup.appendChild(card);
-
-          // Agregar un salto de línea después de cada quinta carta
-          if ((index + 1) % 5 === 0 && index !== events.length - 1) {
-            const br = document.createElement("br");
-            cardGroup.appendChild(br);
+          if (index % 5 === 0 && index !== 0) {
+            // Comenzar una nueva fila después de cada 5 tarjetas
+            cardGroup.appendChild(row);
+            row = createRow();
           }
+
+          const col = document.createElement("div");
+          col.className = "col-md-4 col-lg-2"; // Asegura que no más de 5 tarjetas aparezcan en una fila en pantallas grandes
+          col.innerHTML = `
+        <div class="card mb-4">
+          <img class="card-img-top w-100 d-block" src="${event.image}" />
+          <div class="card-body text-center">
+            <h4 class="card-title">${event.name}</h4>
+            <p class="card-text">${event.description}</p>
+            <button class="btn btn-primary" type="button" data-id="${event._id}">Conocer más</button>
+          </div>
+        </div>
+      `;
+          row.appendChild(col);
         });
 
-        // Agregar event listener a todos los botones
-        const buttons = document.querySelectorAll(".card-body button");
-        buttons.forEach((button) => {
+        cardGroup.appendChild(row); // Asegurarse de añadir la última fila que podría no estar completa
+
+        // Agregar evento a los botones para manejar la selección del evento
+        document.querySelectorAll(".card-body button").forEach((button) => {
           button.addEventListener("click", handleButtonClick);
         });
       }
 
+      function createRow() {
+        const row = document.createElement("div");
+        row.className = "row justify-content-center";
+        return row;
+      }
+
       function handleButtonClick(event) {
         const eventId = event.target.dataset.id;
-        // Almacenar el ID del evento en el almacenamiento local
-        localStorage.setItem("selectedEventId", eventId);
-        // Redireccionar al usuario a la página del carrito
-        window.location.href = "/app/views/Carrito.html";
+        localStorage.setItem("selectedEventId", eventId); // Guarda el ID del evento seleccionado
+        window.location.href = "/app/views/test.html"; // Redirecciona a la página de selección de boletos
       }
 
       document.addEventListener("DOMContentLoaded", function () {
-        // Renderizar eventos cuando se carga la página por primera vez
-        fetchAndRenderEvents();
-
-        // Actualizar eventos cada 30 segundos
-        setInterval(fetchAndRenderEvents, 30000);
+        fetchAndRenderEvents(); // Carga inicial de eventos
+        setInterval(fetchAndRenderEvents, 30000); // Actualiza eventos cada 30 segundos
       });
     </script>
   </body>
 </html>
+
