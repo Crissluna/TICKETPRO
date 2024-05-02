@@ -83,45 +83,50 @@
     </div>
     <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
     <script>
-      document.getElementById("loginForm").addEventListener("submit", async (event) => {
-  event.preventDefault(); // Evita el comportamiento por defecto de enviar el formulario
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault(); // Evita el comportamiento por defecto de enviar el formulario
 
-  const formData = new FormData(event.target);
-  const formObject = {};
-  formData.forEach((value, key) => {
-    formObject[key] = value;
-  });
+          const formData = new FormData(event.target);
+          const formObject = {};
+          formData.forEach((value, key) => {
+            formObject[key] = value;
+          });
 
-  try {
-    const response = await fetch("http://localhost:3000/api/users/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formObject),
-    });
+          try {
+            const response = await fetch(
+              "http://localhost:3000/api/users/login",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formObject),
+              }
+            );
 
-    if (!response.ok) {
-      const errorMessage = await response.text();
-      throw new Error(errorMessage);
-    }
+            if (!response.ok) {
+              const errorMessage = await response.text();
+              throw new Error(errorMessage);
+            }
 
-    // Si la respuesta es exitosa, extraer el token del response
-    const data = await response.json();
-    const token = data.token;
+            // Si la respuesta es exitosa, extraer el token del response
+            const data = await response.json();
+            const token = data.token;
 
-    // Guardar el token JWT en el sessionStorage
-    sessionStorage.setItem("jwtToken", token);
-    console.log("Token JWT almacenado en sessionStorage:", token);
+            // Guardar el token JWT en el sessionStorage
+            sessionStorage.setItem("jwtToken", token);
+            console.log("Token JWT almacenado en sessionStorage:", token);
 
-    // Redirigir a otra página después del inicio de sesión
-    window.location.href = "/app/views/index.html";
-  } catch (error) {
-    console.error(error);
-    // Manejar el error, por ejemplo, mostrar un mensaje de error al usuario
-  }
-});
-
+            // Redirigir a otra página después del inicio de sesión
+            window.location.href = "/app/views/index.html";
+          } catch (error) {
+            console.error(error);
+            // Manejar el error, por ejemplo, mostrar un mensaje de error al usuario
+          }
+        });
     </script>
   </body>
 </html>
+
