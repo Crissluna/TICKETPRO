@@ -1,0 +1,36 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.sections {
+  display: flex;
+  justify-content: space-between;
+}
+
+.section {
+  margin-bottom: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+
+.seat {
+  width: 30px;
+  height: 30px;
+  background-color: lightgray;
+  border: 1px solid gray;
+  cursor: pointer;
+}
+
+.seat.selected {
+  background-color: green;
+}
+.seat.unavailable {
+  background-color: red;
+  cursor: default;
+}
