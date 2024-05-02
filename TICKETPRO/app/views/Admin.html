@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
+    />
+    <title>TicketPRO</title>
+    <link rel="stylesheet" href="../assets/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../assets/css/Hero-Clean-Reverse-images.css" />
+    <link rel="stylesheet" href="../assets/css/Navbar-Right-Links-icons.css" />
+  </head>
+  <body>
+    <div>
+      <nav
+        class="navbar navbar-expand-md bg-body py-3"
+        style="border-bottom: 2px solid #b6c2cc"
+      >
+        <div class="container">
+          <a class="navbar-brand d-flex align-items-center" href="#">
+            <span
+              class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="1em"
+                height="1em"
+                fill="currentColor"
+                viewBox="0 0 16 16"
+                class="bi bi-ticket"
+              >
+                <!-- SVG content -->
+              </svg>
+            </span>
+            <span>TicketPRO</span>
+          </a>
+          <button
+            data-bs-toggle="collapse"
+            class="navbar-toggler"
+            data-bs-target="#navcol-2"
+          >
+            <span class="visually-hidden">Toggle navigation</span>
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navcol-2">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item"></li>
+            </ul>
+            <a class="btn btn-primary ms-md-2" role="button" href="#"
+              >Administradores</a
+            >
+            <a class="btn btn-primary ms-md-2" role="button" href="#"
+              >Tu cuenta</a
+            >
+          </div>
+        </div>
+      </nav>
+    </div>
+
+    <form id="eventDetails" method="post">
+      <div class="container py-4 py-xl-5">
+        <div class="row gy-4 gy-md-0">
+          <div
+            class="col-md-6 text-center text-md-start d-flex d-sm-flex d-md-flex justify-content-center align-items-center justify-content-md-start align-items-md-center justify-content-xl-center"
+          >
+            <div style="max-width: 350px">
+              <h2 class="text-uppercase fw-bold">
+                Agrega los detalles del evento
+              </h2>
+              <input
+                type="text"
+                name="name"
+                placeholder="Nombre del evento"
+                required
+              />
+              <hr />
+              <input
+                type="text"
+                name="description"
+                placeholder="Descripción del evento"
+                required
+              />
+              <hr />
+              <input type="date" name="date" required />
+              <!-- Corregido el nombre del campo de fecha -->
+            </div>
+          </div>
+          <div
+            class="col-md-6 d-flex justify-content-center align-items-center"
+          >
+            <div class="p-xl-5 m-xl-5">
+              <img
+                class="rounded img-fluid w-100 fit-cover"
+                style="min-height: 300px; padding-bottom: 10%"
+                src="https://cdn.bootstrapstudio.io/placeholders/1400x800.png"
+              />
+              <input
+                type="url"
+                name="image"
+                placeholder="URL de la imagen"
+                required
+              />
+              <hr />
+              <button class="btn btn-primary" type="submit">
+                Confirmar selección de evento
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
+    <script>
+      document
+        .getElementById("eventDetails")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const formData = new FormData(event.target);
+          const formObject = {};
+
+          for (let [key, value] of formData.entries()) {
+            formObject[key] = value;
+          }
+
+          // Recuperar el token JWT del sessionStorage
+          const jwtToken = sessionStorage.getItem("jwtToken");
+
+          try {
+            const response = await fetch(
+              "http://localhost:3000/api/admin/createEvent",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: "Bearer " + jwtToken,
+                },
+                body: JSON.stringify(formObject), // Convertir FormData a JSON
+              }
+            );
+
+            if (!response.ok) {
+              const errorMessage = await response.text();
+              throw new Error(errorMessage);
+            }
+
+            window.alert("Evento creado correctamente");
+          } catch (error) {
+            console.error("Error al crear el evento:", error);
+            window.alert("Error al crear el evento: " + error.message);
+          }
+        });
+    </script>
+  </body>
+</html>
